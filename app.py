@@ -4,12 +4,12 @@ from datetime import datetime
 from functools import wraps
 from flask import (
     Flask, render_template, request, redirect, url_for,
-    flash, session, send_from_directory, abort, g
+    flash, session, send_from_directory, abort
 )
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
 from config import Config
-from database import get_db_connection
+from database import get_db_connection, init_db, seed_db
 
 app = Flask(__name__)
 app.config.from_object(Config)
@@ -66,7 +66,6 @@ def admin_required(f):
 def inject_user_context():
     """Inject current user and portal stats into all Jinja templates."""
     current_user = None
-    unread_count = 0
     if 'user_id' in session:
         conn = get_db_connection()
         user_row = conn.execute(
@@ -449,7 +448,6 @@ def my_applications():
 @login_required
 def view_resume(filename):
     """Secure resume download and preview."""
-    # Prevent directory traversal
     safe_name = secure_filename(filename)
     file_path = os.path.join(app.config['UPLOAD_FOLDER'], safe_name)
     if not os.path.exists(file_path):
@@ -493,11 +491,9 @@ def job_listings():
     query += " ORDER BY created_at DESC"
     jobs = conn.execute(query, params).fetchall()
 
-    # Distinct filter options for dropdowns
     departments = conn.execute("SELECT DISTINCT department FROM jobs WHERE department IS NOT NULL AND department != ''").fetchall()
     job_types = conn.execute("SELECT DISTINCT job_type FROM jobs").fetchall()
 
-    # If logged in as student, get list of applied job IDs
     applied_job_ids = set()
     if 'user_id' in session and session.get('role') == 'student':
         rows = conn.execute("SELECT job_id FROM applications WHERE user_id = ?", (session['user_id'],)).fetchall()
@@ -589,7 +585,6 @@ def apply_job(job_id):
                 filepath = os.path.join(app.config['UPLOAD_FOLDER'], safe_name)
                 resume_file.save(filepath)
 
-                # Update student profile with latest resume
                 conn.execute(
                     "UPDATE student_profiles SET resume_filename = ?, updated_at = CURRENT_TIMESTAMP WHERE user_id = ?",
                     (safe_name, user_id)
@@ -642,7 +637,6 @@ def admin_dashboard():
         'rejected': conn.execute("SELECT COUNT(*) FROM applications WHERE status = 'Rejected'").fetchone()[0]
     }
 
-    # Recent applications with student and job details
     recent_applications = conn.execute(
         """SELECT a.*, u.name as student_name, u.email as student_email, 
                   j.title as job_title, j.company_name, sp.roll_number, sp.department
@@ -653,7 +647,6 @@ def admin_dashboard():
            ORDER BY a.applied_at DESC LIMIT 6"""
     ).fetchall()
 
-    # Top hiring companies
     company_stats = conn.execute(
         """SELECT company_name, COUNT(*) as opening_count 
            FROM jobs 
