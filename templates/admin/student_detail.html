@@ -1,0 +1,166 @@
+{% extends "base.html" %}
+
+{% block title %}{{ student.name }} - Student Record{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold mb-1">{{ student.name }}</h2>
+            <p class="text-muted small mb-0">Candidate Academic & Application Dossier</p>
+        </div>
+        <a href="{{ url_for('manage_students') }}" class="btn btn-outline-secondary btn-sm">
+            <i class="bi bi-arrow-left me-1"></i> Back to Student Directory
+        </a>
+    </div>
+
+    <div class="row g-4">
+        <!-- Profile Overview Card -->
+        <div class="col-lg-4">
+            <div class="card card-custom p-4 mb-4">
+                <div class="text-center pb-3 border-bottom mb-3">
+                    <div class="stat-icon-wrapper bg-primary-subtle text-primary mx-auto mb-2 fs-2" style="width: 72px; height: 72px;">
+                        <i class="bi bi-person-fill"></i>
+                    </div>
+                    <h5 class="fw-bold mb-1">{{ student.name }}</h5>
+                    <p class="text-muted small mb-1">{{ student.email }}</p>
+                    <span class="badge bg-light text-dark border">{{ profile.roll_number if profile and profile.roll_number else 'No Roll No' }}</span>
+                </div>
+
+                <ul class="list-unstyled d-flex flex-column gap-2 small text-secondary mb-3">
+                    <li><strong>Department:</strong> {{ profile.department if profile and profile.department else 'N/A' }}</li>
+                    <li><strong>Batch:</strong> {{ profile.batch_year if profile and profile.batch_year else 'N/A' }}</li>
+                    <li><strong>Phone:</strong> {{ profile.phone if profile and profile.phone else 'Not provided' }}</li>
+                </ul>
+
+                {% if profile and (profile.linkedin_url or profile.github_url) %}
+                    <div class="d-flex gap-2 mb-3">
+                        {% if profile.linkedin_url %}
+                            <a href="{{ profile.linkedin_url }}" target="_blank" class="btn btn-sm btn-outline-primary flex-grow-1">
+                                <i class="bi bi-linkedin me-1"></i> LinkedIn
+                            </a>
+                        {% endif %}
+                        {% if profile.github_url %}
+                            <a href="{{ profile.github_url }}" target="_blank" class="btn btn-sm btn-outline-dark flex-grow-1">
+                                <i class="bi bi-github me-1"></i> GitHub
+                            </a>
+                        {% endif %}
+                    </div>
+                {% endif %}
+
+                {% if profile and profile.resume_filename %}
+                    <a href="{{ url_for('view_resume', filename=profile.resume_filename) }}" target="_blank" class="btn btn-primary-custom w-100">
+                        <i class="bi bi-file-earmark-pdf-fill me-1"></i> Download Resume
+                    </a>
+                {% else %}
+                    <div class="alert alert-warning small border-0 mb-0 text-center">
+                        No Resume Attached
+                    </div>
+                {% endif %}
+            </div>
+
+            {% if profile and profile.bio %}
+                <div class="card card-custom p-4">
+                    <h6 class="fw-bold mb-2">Candidate Statement</h6>
+                    <p class="text-muted small mb-0" style="white-space: pre-line;">{{ profile.bio }}</p>
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- Academic & Applications Details -->
+        <div class="col-lg-8">
+            <!-- Education History -->
+            <div class="card card-custom p-4 mb-4">
+                <h5 class="fw-bold mb-3 d-flex align-items-center gap-2">
+                    <i class="bi bi-mortarboard text-primary"></i> Academic Qualifications
+                </h5>
+                {% if education %}
+                    <div class="d-flex flex-column gap-3">
+                        {% for edu in education %}
+                            <div class="p-3 bg-light rounded-3 border">
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <div>
+                                        <div class="fw-bold">{{ edu.degree }}</div>
+                                        <div class="text-muted small">{{ edu.institution }}</div>
+                                        <div class="small text-secondary">{{ edu.start_year }} - {{ edu.end_year or 'Present' }}</div>
+                                    </div>
+                                    {% if edu.grade_or_cgpa %}
+                                        <span class="badge bg-primary-subtle text-primary">{{ edu.grade_or_cgpa }}</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <p class="text-muted small mb-0">No education entries added yet.</p>
+                {% endif %}
+            </div>
+
+            <!-- Technical Skills -->
+            <div class="card card-custom p-4 mb-4">
+                <h5 class="fw-bold mb-3 d-flex align-items-center gap-2">
+                    <i class="bi bi-tools text-primary"></i> Technical Skills
+                </h5>
+                {% if skills %}
+                    <div class="d-flex flex-wrap gap-2">
+                        {% for s in skills %}
+                            <div class="skill-pill bg-light border">
+                                <span class="fw-semibold">{{ s.skill_name }}</span>
+                                <small class="text-muted ms-1">({{ s.proficiency }})</small>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <p class="text-muted small mb-0">No skills listed.</p>
+                {% endif %}
+            </div>
+
+            <!-- Placement Applications History -->
+            <div class="card card-custom p-4">
+                <h5 class="fw-bold mb-3 d-flex align-items-center gap-2">
+                    <i class="bi bi-journal-check text-primary"></i> Placement Applications History
+                </h5>
+                {% if applications %}
+                    <div class="table-responsive">
+                        <table class="table align-middle small mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Role & Company</th>
+                                    <th>Applied On</th>
+                                    <th>Current Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for app in applications %}
+                                    <tr>
+                                        <td>
+                                            <div class="fw-bold">{{ app.title }}</div>
+                                            <div class="text-muted">{{ app.company_name }}</div>
+                                        </td>
+                                        <td class="text-muted">{{ app.applied_at[:10] }}</td>
+                                        <td>
+                                            {% if app.status == 'Pending' %}
+                                                <span class="badge-status badge-pending">Pending</span>
+                                            {% elif app.status == 'Under Review' %}
+                                                <span class="badge-status badge-under-review">Under Review</span>
+                                            {% elif app.status == 'Shortlisted' %}
+                                                <span class="badge-status badge-shortlisted">Shortlisted</span>
+                                            {% elif app.status == 'Selected' %}
+                                                <span class="badge-status badge-selected">Selected</span>
+                                            {% elif app.status == 'Rejected' %}
+                                                <span class="badge-status badge-rejected">Rejected</span>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <p class="text-muted small mb-0">Student has not submitted any job applications yet.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

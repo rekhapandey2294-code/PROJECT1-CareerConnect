@@ -1,0 +1,249 @@
+{% extends "base.html" %}
+
+{% block title %}My Profile & Resume - CareerConnect{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold mb-1">Student Profile & Credentials</h2>
+            <p class="text-muted small mb-0">Manage your contact information, education, technical skills, and resume.</p>
+        </div>
+        <a href="{{ url_for('student_dashboard') }}" class="btn btn-outline-secondary btn-sm">
+            <i class="bi bi-arrow-left me-1"></i> Back to Dashboard
+        </a>
+    </div>
+
+    <div class="row g-4">
+        <!-- Left Column: Personal Information & Resume Upload -->
+        <div class="col-lg-6">
+            <!-- Basic Details Card -->
+            <div class="card card-custom p-4 mb-4">
+                <h5 class="fw-bold mb-3 d-flex align-items-center gap-2">
+                    <i class="bi bi-person-lines-fill text-primary"></i> Personal Information
+                </h5>
+
+                <form method="POST" action="{{ url_for('student_profile') }}">
+                    <input type="hidden" name="action" value="update_profile">
+
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Full Name</label>
+                            <input type="text" class="form-control" value="{{ user.name }}" disabled>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Email Address</label>
+                            <input type="email" class="form-control" value="{{ user.email }}" disabled>
+                        </div>
+                    </div>
+
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-6">
+                            <label for="phone" class="form-label">Phone Number</label>
+                            <input type="tel" class="form-control" id="phone" name="phone" value="{{ profile.phone or '' }}" placeholder="+91 98765 43210">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="roll_number" class="form-label">Roll Number</label>
+                            <input type="text" class="form-control" id="roll_number" name="roll_number" value="{{ profile.roll_number or '' }}" placeholder="CS2022-001">
+                        </div>
+                    </div>
+
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-6">
+                            <label for="department" class="form-label">Department / Branch</label>
+                            <input type="text" class="form-control" id="department" name="department" value="{{ profile.department or '' }}" placeholder="e.g. Computer Science">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="batch_year" class="form-label">Graduating Batch Year</label>
+                            <input type="number" class="form-control" id="batch_year" name="batch_year" value="{{ profile.batch_year or 2026 }}" placeholder="2026">
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="bio" class="form-label">Short Bio / Career Objective</label>
+                        <textarea class="form-control" id="bio" name="bio" rows="3" placeholder="Briefly introduce your career aspirations and core strengths...">{{ profile.bio or '' }}</textarea>
+                    </div>
+
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-6">
+                            <label for="linkedin_url" class="form-label"><i class="bi bi-linkedin text-primary me-1"></i> LinkedIn Profile URL</label>
+                            <input type="url" class="form-control" id="linkedin_url" name="linkedin_url" value="{{ profile.linkedin_url or '' }}" placeholder="https://linkedin.com/in/username">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="github_url" class="form-label"><i class="bi bi-github me-1"></i> GitHub / Portfolio URL</label>
+                            <input type="url" class="form-control" id="github_url" name="github_url" value="{{ profile.github_url or '' }}" placeholder="https://github.com/username">
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary-custom w-100">
+                        <i class="bi bi-save me-1"></i> Save Profile Details
+                    </button>
+                </form>
+            </div>
+
+            <!-- Resume Document Upload Card -->
+            <div class="card card-custom p-4">
+                <h5 class="fw-bold mb-3 d-flex align-items-center gap-2">
+                    <i class="bi bi-file-earmark-pdf-fill text-danger"></i> Official Resume Document
+                </h5>
+
+                {% if profile and profile.resume_filename %}
+                    <div class="d-flex align-items-center justify-content-between p-3 bg-light rounded-3 border mb-3">
+                        <div class="d-flex align-items-center gap-3">
+                            <i class="bi bi-file-earmark-check-fill text-success fs-2"></i>
+                            <div>
+                                <div class="fw-bold text-truncate" style="max-width: 250px;">{{ profile.resume_filename }}</div>
+                                <small class="text-muted">Attached to your candidate profile</small>
+                            </div>
+                        </div>
+                        <a href="{{ url_for('view_resume', filename=profile.resume_filename) }}" target="_blank" class="btn btn-sm btn-outline-primary">
+                            <i class="bi bi-eye me-1"></i> View Resume
+                        </a>
+                    </div>
+                {% else %}
+                    <div class="alert alert-warning border-0 small d-flex align-items-center gap-2 mb-3">
+                        <i class="bi bi-exclamation-triangle-fill fs-5"></i>
+                        <span>No resume uploaded yet. You cannot apply to jobs without an active resume.</span>
+                    </div>
+                {% endif %}
+
+                <form method="POST" action="{{ url_for('student_profile') }}" enctype="multipart/form-data">
+                    <input type="hidden" name="action" value="upload_resume">
+                    <div class="mb-3">
+                        <label for="resume" class="form-label">Upload New Resume (PDF / DOC / DOCX - Max 5MB)</label>
+                        <input class="form-control" type="file" id="resume" name="resume" accept=".pdf,.doc,.docx" required>
+                    </div>
+                    <button type="submit" class="btn btn-dark w-100">
+                        <i class="bi bi-cloud-arrow-up-fill me-1"></i> Upload Resume
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Right Column: Education & Skills -->
+        <div class="col-lg-6">
+            <!-- Education Card -->
+            <div class="card card-custom p-4 mb-4">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="fw-bold mb-0 d-flex align-items-center gap-2">
+                        <i class="bi bi-mortarboard-fill text-primary"></i> Education History
+                    </h5>
+                    <button type="button" class="btn btn-sm btn-primary-custom" data-bs-toggle="collapse" data-bs-target="#addEducationForm">
+                        <i class="bi bi-plus-lg me-1"></i> Add Record
+                    </button>
+                </div>
+
+                <!-- Collapsible Add Education Form -->
+                <div class="collapse mb-4" id="addEducationForm">
+                    <div class="p-3 bg-light rounded-3 border">
+                        <h6 class="fw-bold mb-2">New Academic Entry</h6>
+                        <form method="POST" action="{{ url_for('add_education') }}">
+                            <div class="mb-2">
+                                <label class="form-label small">Degree / Certificate</label>
+                                <input type="text" name="degree" class="form-control form-control-sm" placeholder="e.g. B.Tech Computer Science" required>
+                            </div>
+                            <div class="mb-2">
+                                <label class="form-label small">School / College / University</label>
+                                <input type="text" name="institution" class="form-control form-control-sm" placeholder="e.g. National Institute of Technology" required>
+                            </div>
+                            <div class="row g-2 mb-2">
+                                <div class="col-6">
+                                    <label class="form-label small">Start Year</label>
+                                    <input type="number" name="start_year" class="form-control form-control-sm" placeholder="2022" required>
+                                </div>
+                                <div class="col-6">
+                                    <label class="form-label small">End Year (or Expected)</label>
+                                    <input type="number" name="end_year" class="form-control form-control-sm" placeholder="2026">
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label small">Grade / CGPA / Percentage</label>
+                                <input type="text" name="grade_or_cgpa" class="form-control form-control-sm" placeholder="e.g. 8.8 CGPA or 92%">
+                            </div>
+                            <div class="d-flex justify-content-end gap-2">
+                                <button type="button" class="btn btn-sm btn-outline-secondary" data-bs-toggle="collapse" data-bs-target="#addEducationForm">Cancel</button>
+                                <button type="submit" class="btn btn-sm btn-primary">Save Education</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Existing Education List -->
+                {% if education_list %}
+                    <div class="d-flex flex-column gap-3">
+                        {% for edu in education_list %}
+                            <div class="p-3 bg-light rounded-3 border d-flex justify-content-between align-items-center">
+                                <div>
+                                    <div class="fw-bold">{{ edu.degree }}</div>
+                                    <div class="text-muted small">{{ edu.institution }}</div>
+                                    <div class="small text-secondary">
+                                        <span>{{ edu.start_year }} - {{ edu.end_year if edu.end_year else 'Present' }}</span>
+                                        {% if edu.grade_or_cgpa %}&bull; <span class="badge bg-secondary-subtle text-dark">{{ edu.grade_or_cgpa }}</span>{% endif %}
+                                    </div>
+                                </div>
+                                <form method="POST" action="{{ url_for('delete_education', edu_id=edu.id) }}" class="confirm-delete" data-confirm-message="Delete this education entry?">
+                                    <button type="submit" class="btn btn-sm btn-outline-danger border-0">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <p class="text-muted small text-center py-3 mb-0">No education entries added yet.</p>
+                {% endif %}
+            </div>
+
+            <!-- Skills Management Card -->
+            <div class="card card-custom p-4">
+                <h5 class="fw-bold mb-3 d-flex align-items-center gap-2">
+                    <i class="bi bi-tools text-primary"></i> Skills & Proficiencies
+                </h5>
+
+                <!-- Add Skill Form -->
+                <form method="POST" action="{{ url_for('add_skill') }}" class="mb-4">
+                    <div class="row g-2 align-items-end">
+                        <div class="col-sm-6">
+                            <label class="form-label small">Skill Name</label>
+                            <input type="text" name="skill_name" class="form-control form-control-sm" placeholder="e.g. Python, SQL, React" required>
+                        </div>
+                        <div class="col-sm-4">
+                            <label class="form-label small">Proficiency</label>
+                            <select name="proficiency" class="form-select form-select-sm">
+                                <option value="Beginner">Beginner</option>
+                                <option value="Intermediate" selected>Intermediate</option>
+                                <option value="Advanced">Advanced</option>
+                                <option value="Expert">Expert</option>
+                            </select>
+                        </div>
+                        <div class="col-sm-2">
+                            <button type="submit" class="btn btn-sm btn-primary-custom w-100">Add</button>
+                        </div>
+                    </div>
+                </form>
+
+                <!-- Skills Badges -->
+                {% if skills_list %}
+                    <div class="d-flex flex-wrap gap-2">
+                        {% for skill in skills_list %}
+                            <div class="skill-pill bg-white border shadow-sm d-flex align-items-center gap-2">
+                                <div>
+                                    <span class="fw-semibold">{{ skill.skill_name }}</span>
+                                    <small class="text-muted ms-1">({{ skill.proficiency }})</small>
+                                </div>
+                                <form method="POST" action="{{ url_for('delete_skill', skill_id=skill.id) }}" class="d-inline m-0">
+                                    <button type="submit" class="btn p-0 border-0 text-danger small lh-1" title="Remove Skill">
+                                        <i class="bi bi-x-circle-fill"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <p class="text-muted small text-center py-2 mb-0">No technical skills added yet. Add programming languages, frameworks, or tools.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

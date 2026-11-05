@@ -1,0 +1,119 @@
+{% extends "base.html" %}
+
+{% block title %}About Us - CareerConnect Placement Cell{% endblock %}
+
+{% block content %}
+<!-- Header -->
+<div class="bg-white border-bottom py-5">
+    <div class="container text-center">
+        <span class="badge bg-primary-subtle text-primary fw-semibold px-3 py-2 rounded-pill mb-2">Our Mission</span>
+        <h1 class="fw-bold mb-3">Empowering Tomorrow's Tech Leaders Today</h1>
+        <p class="text-muted mx-auto" style="max-width: 680px;">
+            CareerConnect is the institutional placement and career coordination infrastructure designed to bridge the gap between academic brilliance and modern industry expectations.
+        </p>
+    </div>
+</div>
+
+<div class="container py-5">
+    <!-- Value Pillars -->
+    <div class="row g-4 mb-5">
+        <div class="col-md-4">
+            <div class="card card-custom h-100 p-4">
+                <div class="stat-icon-wrapper bg-primary-subtle text-primary mb-3">
+                    <i class="bi bi-bullseye"></i>
+                </div>
+                <h5 class="fw-bold">Targeted Opportunities</h5>
+                <p class="text-muted small mb-0">
+                    Students discover placement drives precisely tailored to their degree, branch, and technical skill sets, eliminating noise.
+                </p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card card-custom h-100 p-4">
+                <div class="stat-icon-wrapper bg-success-subtle text-success mb-3">
+                    <i class="bi bi-shield-check"></i>
+                </div>
+                <h5 class="fw-bold">100% Verified Recruiters</h5>
+                <p class="text-muted small mb-0">
+                    Every corporate opening is reviewed and validated by the university placement department before publication.
+                </p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card card-custom h-100 p-4">
+                <div class="stat-icon-wrapper bg-info-subtle text-info mb-3">
+                    <i class="bi bi-speedometer"></i>
+                </div>
+                <h5 class="fw-bold">Transparent Tracking</h5>
+                <p class="text-muted small mb-0">
+                    No black-box recruitment. Track your resume review, shortlisting rounds, and final selection statuses in real-time.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- FAQ Accordion -->
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="text-center mb-4">
+                <span class="text-primary fw-bold text-uppercase small">Got Questions?</span>
+                <h3 class="fw-bold">Frequently Asked Questions</h3>
+            </div>
+
+            <div class="accordion shadow-sm rounded-4 overflow-hidden" id="faqAccordion">
+                <div class="accordion-item border-0 border-bottom">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button fw-bold collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq1">
+                            How do I upload and update my resume?
+                        </button>
+                    </h2>
+                    <div id="faq1" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                        <div class="accordion-body text-muted small">
+                            After logging into your student account, navigate to <strong>Profile & Resume</strong> from the top navigation menu. Under the "Resume Document" section, select your PDF or DOCX file (up to 5MB) and click "Upload Resume". Your updated resume will automatically attach to all future job applications.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="accordion-item border-0 border-bottom">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button fw-bold collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq2">
+                            Can I apply for multiple placement drives simultaneously?
+                        </button>
+                    </h2>
+                    <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                        <div class="accordion-body text-muted small">
+                            Yes! Eligible students can apply to any active job opening matching their profile. You can monitor the progress of each application independently on the <strong>My Applications</strong> page.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="accordion-item border-0 border-bottom">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button fw-bold collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq3">
+                            How do placement administrators review candidate applications?
+                        </button>
+                    </h2>
+                    <div id="faq3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                        <div class="accordion-body text-muted small">
+                            Placement officers access the Admin Console where they can filter applications by position, review student GPA, technical skills, and candidate cover notes, download resumes, and mark candidates as <strong>Under Review</strong>, <strong>Shortlisted</strong>, <strong>Selected</strong>, or <strong>Rejected</strong>.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="accordion-item border-0">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button fw-bold collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq4">
+                            What technologies power CareerConnect?
+                        </button>
+                    </h2>
+                    <div id="faq4" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                        <div class="accordion-body text-muted small">
+                            CareerConnect is built using clean, production-standard <strong>Python Flask</strong>, responsive <strong>Bootstrap 5</strong> with semantic HTML5/CSS3, and a relational <strong>SQLite</strong> database with foreign key constraints.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,296 @@
+{% extends "base.html" %}
+
+{% block title %}CareerConnect - Campus Placement & Job Portal{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-wrapper">
+    <div class="container position-relative" style="z-index: 2;">
+        <div class="row align-items-center g-5">
+            <div class="col-lg-7">
+                <span class="badge bg-primary bg-opacity-25 text-white border border-light border-opacity-25 px-3 py-2 rounded-pill mb-3">
+                    <i class="bi bi-stars text-warning me-1"></i> Campus Placement Season 2026 Live
+                </span>
+                <h1 class="hero-title text-white">
+                    Bridging College Talent with <span class="text-primary">Industry Leaders</span>
+                </h1>
+                <p class="hero-subtitle mb-4">
+                    CareerConnect is the smart placement hub designed for students, training officers, and top-tier recruiters. Explore verified corporate drives, track interviews, and launch your career.
+                </p>
+
+                <!-- Direct Job Search Form -->
+                <form action="{{ url_for('job_listings') }}" method="GET" class="p-2 bg-white rounded-4 shadow-lg d-flex flex-column flex-md-row gap-2">
+                    <div class="input-group border-0">
+                        <span class="input-group-text bg-white border-0 text-muted ps-3">
+                            <i class="bi bi-search fs-5"></i>
+                        </span>
+                        <input type="text" name="keyword" class="form-control border-0 shadow-none ps-2" placeholder="Job title, tech stack, or company...">
+                    </div>
+                    <div class="vr d-none d-md-block opacity-25"></div>
+                    <div class="input-group border-0">
+                        <span class="input-group-text bg-white border-0 text-muted ps-3">
+                            <i class="bi bi-geo-alt fs-5"></i>
+                        </span>
+                        <input type="text" name="location" class="form-control border-0 shadow-none ps-2" placeholder="City or Remote">
+                    </div>
+                    <button type="submit" class="btn btn-primary-custom px-4 py-3 rounded-3 text-nowrap">
+                        <i class="bi bi-arrow-right-circle me-1"></i> Search Jobs
+                    </button>
+                </form>
+
+                <div class="d-flex flex-wrap gap-4 mt-4 pt-2 text-white-50 small">
+                    <div><i class="bi bi-shield-check text-success me-1"></i> 100% Verified Employers</div>
+                    <div><i class="bi bi-clock-history text-info me-1"></i> Real-time Application Tracking</div>
+                    <div><i class="bi bi-file-earmark-pdf text-warning me-1"></i> Direct Resume Screening</div>
+                </div>
+            </div>
+
+            <!-- Hero Graphic / Highlights -->
+            <div class="col-lg-5 d-none d-lg-block">
+                <div class="card bg-white bg-opacity-10 backdrop-blur border border-white border-opacity-20 p-4 rounded-4 shadow-lg text-white">
+                    <div class="d-flex align-items-center justify-content-between mb-4">
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="stat-icon-wrapper bg-primary text-white">
+                                <i class="bi bi-trophy-fill"></i>
+                            </div>
+                            <div>
+                                <h6 class="mb-0 text-white">Placement Highlights</h6>
+                                <small class="text-white-50">Current Academic Year</small>
+                            </div>
+                        </div>
+                        <span class="badge bg-success">Active Drives</span>
+                    </div>
+
+                    <div class="list-group list-group-flush gap-3 bg-transparent">
+                        <div class="d-flex align-items-center justify-content-between bg-dark bg-opacity-25 p-3 rounded-3">
+                            <div class="d-flex align-items-center gap-3">
+                                <div class="bg-primary p-2 rounded-2"><i class="bi bi-briefcase text-white"></i></div>
+                                <div>
+                                    <div class="fw-semibold">Software Development</div>
+                                    <small class="text-white-50">14 Active Openings</small>
+                                </div>
+                            </div>
+                            <span class="badge bg-primary-subtle text-primary">High Demand</span>
+                        </div>
+                        <div class="d-flex align-items-center justify-content-between bg-dark bg-opacity-25 p-3 rounded-3">
+                            <div class="d-flex align-items-center gap-3">
+                                <div class="bg-success p-2 rounded-2"><i class="bi bi-graph-up-arrow text-white"></i></div>
+                                <div>
+                                    <div class="fw-semibold">Data Science & AI</div>
+                                    <small class="text-white-50">8 Active Openings</small>
+                                </div>
+                            </div>
+                            <span class="badge bg-success-subtle text-success">Trending</span>
+                        </div>
+                        <div class="d-flex align-items-center justify-content-between bg-dark bg-opacity-25 p-3 rounded-3">
+                            <div class="d-flex align-items-center gap-3">
+                                <div class="bg-info p-2 rounded-2"><i class="bi bi-cloud text-white"></i></div>
+                                <div>
+                                    <div class="fw-semibold">Cloud & DevOps</div>
+                                    <small class="text-white-50">6 Active Openings</small>
+                                </div>
+                            </div>
+                            <span class="badge bg-info-subtle text-info">Fast Track</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Live Portal Metrics -->
+<section class="py-5" style="margin-top: -30px; position: relative; z-index: 3;">
+    <div class="container">
+        <div class="row g-4">
+            <div class="col-md-3 col-6">
+                <div class="stat-card shadow-sm">
+                    <div class="stat-icon-wrapper bg-primary-subtle text-primary">
+                        <i class="bi bi-briefcase"></i>
+                    </div>
+                    <div>
+                        <div class="stat-val text-dark">{{ total_jobs }}</div>
+                        <div class="stat-label">Active Drives</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 col-6">
+                <div class="stat-card shadow-sm">
+                    <div class="stat-icon-wrapper bg-info-subtle text-info">
+                        <i class="bi bi-people"></i>
+                    </div>
+                    <div>
+                        <div class="stat-val text-dark">{{ total_students }}</div>
+                        <div class="stat-label">Students Registered</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 col-6">
+                <div class="stat-card shadow-sm">
+                    <div class="stat-icon-wrapper bg-success-subtle text-success">
+                        <i class="bi bi-award"></i>
+                    </div>
+                    <div>
+                        <div class="stat-val text-dark">{{ total_placed }}</div>
+                        <div class="stat-label">Offers Extended</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 col-6">
+                <div class="stat-card shadow-sm">
+                    <div class="stat-icon-wrapper bg-warning-subtle text-warning">
+                        <i class="bi bi-buildings"></i>
+                    </div>
+                    <div>
+                        <div class="stat-val text-dark">{{ total_companies }}</div>
+                        <div class="stat-label">Partner Recruiters</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Featured Jobs Section -->
+<section class="py-5">
+    <div class="container">
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-end mb-4">
+            <div>
+                <span class="text-primary fw-bold text-uppercase small tracking-wide">Placement Openings</span>
+                <h2 class="mb-1">Featured Campus Placement Drives</h2>
+                <p class="text-muted mb-0">Handpicked roles accepting student applications right now.</p>
+            </div>
+            <a href="{{ url_for('job_listings') }}" class="btn btn-outline-custom mt-3 mt-md-0 d-inline-flex align-items-center gap-2">
+                <span>View All Jobs</span>
+                <i class="bi bi-arrow-right"></i>
+            </a>
+        </div>
+
+        <div class="row g-4">
+            {% for job in featured_jobs %}
+                <div class="col-lg-4 col-md-6">
+                    <div class="card card-custom card-hover h-100 p-4 d-flex flex-column justify-content-between">
+                        <div>
+                            <div class="d-flex align-items-center justify-content-between mb-3">
+                                <div class="company-avatar">
+                                    <i class="bi {{ job.company_logo or 'bi-building' }}"></i>
+                                </div>
+                                <span class="badge-jobtype">{{ job.job_type }}</span>
+                            </div>
+
+                            <h5 class="fw-bold mb-1">
+                                <a href="{{ url_for('job_details', job_id=job.id) }}" class="text-decoration-none text-dark hover-primary">
+                                    {{ job.title }}
+                                </a>
+                            </h5>
+                            <p class="text-muted fw-semibold small mb-3">{{ job.company_name }}</p>
+
+                            <div class="d-flex flex-column gap-2 text-secondary small mb-4">
+                                <div class="d-flex align-items-center gap-2">
+                                    <i class="bi bi-geo-alt text-primary"></i>
+                                    <span>{{ job.location }}</span>
+                                </div>
+                                <div class="d-flex align-items-center gap-2">
+                                    <i class="bi bi-cash-stack text-success"></i>
+                                    <span class="fw-semibold text-dark">{{ job.salary_range or 'Industry Standard' }}</span>
+                                </div>
+                                {% if job.deadline %}
+                                    <div class="d-flex align-items-center gap-2">
+                                        <i class="bi bi-calendar-event text-danger"></i>
+                                        <span>Deadline: {{ job.deadline }}</span>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="pt-3 border-top d-flex justify-content-between align-items-center">
+                            <span class="text-muted small">
+                                <i class="bi bi-people me-1"></i> {{ job.vacancies }} Vacanc{{ 'y' if job.vacancies == 1 else 'ies' }}
+                            </span>
+                            <a href="{{ url_for('job_details', job_id=job.id) }}" class="btn btn-sm btn-outline-primary rounded-pill px-3">
+                                View Details &rarr;
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            {% else %}
+                <div class="col-12 text-center py-5">
+                    <i class="bi bi-inbox fs-1 text-muted"></i>
+                    <p class="text-muted mt-2">No active jobs found at the moment. Check back soon!</p>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- How CareerConnect Works -->
+<section class="py-5 bg-white border-top border-bottom">
+    <div class="container py-3">
+        <div class="text-center max-w-700 mx-auto mb-5">
+            <span class="text-primary fw-bold text-uppercase small">Streamlined Workflow</span>
+            <h2 class="mt-1">How Placement Works on CareerConnect</h2>
+            <p class="text-muted">A structured 3-step pathway from registration to campus offer letter.</p>
+        </div>
+
+        <div class="row g-4 text-center">
+            <div class="col-md-4">
+                <div class="p-4 rounded-4 bg-light h-100">
+                    <div class="stat-icon-wrapper bg-primary text-white mx-auto mb-3 shadow-sm">
+                        <i class="bi bi-person-badge"></i>
+                    </div>
+                    <h5 class="fw-bold mb-2">1. Build Your Profile</h5>
+                    <p class="text-muted small mb-0">
+                        Create your academic profile, add verified degrees, technical skills, and upload your official PDF resume.
+                    </p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="p-4 rounded-4 bg-light h-100">
+                    <div class="stat-icon-wrapper bg-info text-white mx-auto mb-3 shadow-sm">
+                        <i class="bi bi-funnel"></i>
+                    </div>
+                    <h5 class="fw-bold mb-2">2. Discover & Apply</h5>
+                    <p class="text-muted small mb-0">
+                        Filter drives by role, salary, and requirements. Submit applications along with personalized candidate notes with a single click.
+                    </p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="p-4 rounded-4 bg-light h-100">
+                    <div class="stat-icon-wrapper bg-success text-white mx-auto mb-3 shadow-sm">
+                        <i class="bi bi-check2-circle"></i>
+                    </div>
+                    <h5 class="fw-bold mb-2">3. Track Status Live</h5>
+                    <p class="text-muted small mb-0">
+                        Watch your applications move transparently through Under Review, Shortlisted, and Selected status in real-time.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Call to Action Banner -->
+<section class="py-5">
+    <div class="container">
+        <div class="p-5 rounded-4 shadow-lg text-white position-relative overflow-hidden" style="background: var(--hero-gradient);">
+            <div class="row align-items-center">
+                <div class="col-lg-8">
+                    <h2 class="text-white fw-bold mb-2">Ready to Kickstart Your Career Journey?</h2>
+                    <p class="text-white-50 mb-4 mb-lg-0">
+                        Join hundreds of classmates already exploring placements and internships through CareerConnect.
+                    </p>
+                </div>
+                <div class="col-lg-4 text-lg-end">
+                    {% if not current_user %}
+                        <a href="{{ url_for('register') }}" class="btn btn-primary-custom btn-lg px-4 me-2">Create Account</a>
+                        <a href="{{ url_for('login') }}" class="btn btn-outline-light btn-lg px-4">Sign In</a>
+                    {% else %}
+                        <a href="{{ url_for('job_listings') }}" class="btn btn-primary-custom btn-lg px-4">Explore Opportunities</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

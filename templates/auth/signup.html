@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+
+{% block title %}Student Registration - CareerConnect{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-6 col-md-8">
+            <div class="card card-custom p-4 p-md-5 shadow-lg">
+                <div class="text-center mb-4">
+                    <div class="d-inline-flex align-items-center justify-content-center bg-primary-subtle text-primary rounded-circle p-3 mb-2">
+                        <i class="bi bi-person-plus-fill fs-3"></i>
+                    </div>
+                    <h3 class="fw-bold mb-1">Create Student Account</h3>
+                    <p class="text-muted small">Register to explore campus drives and track placement offers</p>
+                </div>
+
+                <form method="POST" action="{{ url_for('register') }}" id="signupForm">
+                    <div class="mb-3">
+                        <label for="name" class="form-label">Full Name <span class="text-danger">*</span></label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light text-muted border-end-0"><i class="bi bi-person"></i></span>
+                            <input type="text" class="form-control border-start-0" id="name" name="name" placeholder="e.g. Rahul Sharma" required>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="email" class="form-label">College Email Address <span class="text-danger">*</span></label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light text-muted border-end-0"><i class="bi bi-envelope"></i></span>
+                            <input type="email" class="form-control border-start-0" id="email" name="email" placeholder="student@careerconnect.com" required>
+                        </div>
+                        <small class="text-muted">Use your institutional or active academic email.</small>
+                    </div>
+
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-6">
+                            <label for="roll_number" class="form-label">Roll Number</label>
+                            <input type="text" class="form-control" id="roll_number" name="roll_number" placeholder="e.g. CS2022-042">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="department" class="form-label">Department / Branch</label>
+                            <select class="form-select" id="department" name="department">
+                                <option value="" selected>Select Department</option>
+                                <option value="Computer Science & Engineering">Computer Science & Engg</option>
+                                <option value="Information Technology">Information Technology</option>
+                                <option value="Data Science & AI">Data Science & AI</option>
+                                <option value="Electronics & Communication">Electronics & Comm</option>
+                                <option value="Mechanical Engineering">Mechanical Engg</option>
+                                <option value="Electrical Engineering">Electrical Engg</option>
+                                <option value="Civil Engineering">Civil Engg</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-6">
+                            <label for="password" class="form-label">Password <span class="text-danger">*</span></label>
+                            <input type="password" class="form-control" id="password" name="password" placeholder="Min 6 characters" minlength="6" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="confirm_password" class="form-label">Confirm Password <span class="text-danger">*</span></label>
+                            <input type="password" class="form-control" id="confirm_password" name="confirm_password" placeholder="Re-enter password" minlength="6" required>
+                        </div>
+                    </div>
+                    <div id="passwordFeedback" class="mb-3"></div>
+
+                    <button type="submit" class="btn btn-primary-custom w-100 py-3 mb-3">
+                        <i class="bi bi-check-circle me-1"></i> Register Student Account
+                    </button>
+
+                    <div class="text-center small text-muted">
+                        Already have an account? 
+                        <a href="{{ url_for('login') }}" class="text-primary fw-bold text-decoration-none">Sign In Here</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

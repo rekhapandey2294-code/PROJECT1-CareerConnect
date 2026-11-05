@@ -1,0 +1,193 @@
+{% extends "base.html" %}
+
+{% block title %}Student Dashboard - CareerConnect{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Top Greeting Banner -->
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center bg-white p-4 rounded-4 shadow-sm border mb-4">
+        <div>
+            <span class="badge bg-primary-subtle text-primary fw-semibold mb-1">Student Portal</span>
+            <h2 class="fw-bold mb-1">Welcome back, {{ current_user.name }}! 👋</h2>
+            <p class="text-muted small mb-0">
+                Department: <span class="fw-semibold text-dark">{{ profile.department if profile and profile.department else 'Not specified' }}</span> 
+                {% if profile and profile.roll_number %}| Roll No: <span class="fw-semibold text-dark">{{ profile.roll_number }}</span>{% endif %}
+            </p>
+        </div>
+        <div class="mt-3 mt-md-0 d-flex gap-2">
+            <a href="{{ url_for('student_profile') }}" class="btn btn-outline-custom btn-sm">
+                <i class="bi bi-person-gear me-1"></i> Edit Profile
+            </a>
+            <a href="{{ url_for('job_listings') }}" class="btn btn-primary-custom btn-sm">
+                <i class="bi bi-search me-1"></i> Explore Drives
+            </a>
+        </div>
+    </div>
+
+    <!-- Profile Completion Progress Bar -->
+    <div class="card card-custom p-4 mb-4">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+            <div class="d-flex align-items-center gap-2">
+                <i class="bi bi-person-check-fill text-primary fs-5"></i>
+                <span class="fw-bold">Profile Strength</span>
+            </div>
+            <span class="fw-bold text-primary">{{ completion_percentage }}%</span>
+        </div>
+        <div class="progress" style="height: 10px;">
+            <div class="progress-bar bg-primary progress-bar-striped progress-bar-animated" role="progressbar" style="width: {{ completion_percentage }}%;"></div>
+        </div>
+        {% if completion_percentage < 100 %}
+            <div class="mt-2 small text-muted d-flex justify-content-between align-items-center">
+                <span>Tip: Add your education records, technical skills, and upload your resume to reach 100%.</span>
+                <a href="{{ url_for('student_profile') }}" class="text-primary fw-semibold text-decoration-none">Complete Now &rarr;</a>
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- Student Stats Counter -->
+    <div class="row g-3 mb-4">
+        <div class="col-md-3 col-6">
+            <div class="stat-card">
+                <div class="stat-icon-wrapper bg-primary-subtle text-primary">
+                    <i class="bi bi-send-fill"></i>
+                </div>
+                <div>
+                    <div class="stat-val">{{ stats.total_applied }}</div>
+                    <div class="stat-label">Total Applied</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-6">
+            <div class="stat-card">
+                <div class="stat-icon-wrapper bg-info-subtle text-info">
+                    <i class="bi bi-hourglass-split"></i>
+                </div>
+                <div>
+                    <div class="stat-val">{{ stats.under_review }}</div>
+                    <div class="stat-label">In Review</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-6">
+            <div class="stat-card">
+                <div class="stat-icon-wrapper bg-purple-subtle text-purple" style="background:#f3e8ff; color:#7e22ce;">
+                    <i class="bi bi-award-fill"></i>
+                </div>
+                <div>
+                    <div class="stat-val">{{ stats.shortlisted }}</div>
+                    <div class="stat-label">Shortlisted</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-6">
+            <div class="stat-card">
+                <div class="stat-icon-wrapper bg-success-subtle text-success">
+                    <i class="bi bi-check-circle-fill"></i>
+                </div>
+                <div>
+                    <div class="stat-val">{{ stats.selected }}</div>
+                    <div class="stat-label">Selected Offers</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <!-- Recent Applications Table -->
+        <div class="col-lg-8">
+            <div class="card card-custom p-4 h-100">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="fw-bold mb-0">Recent Applications</h5>
+                    <a href="{{ url_for('my_applications') }}" class="small text-primary fw-semibold text-decoration-none">View All &rarr;</a>
+                </div>
+
+                {% if recent_applications %}
+                    <div class="table-responsive">
+                        <table class="table align-middle">
+                            <thead class="table-light small text-uppercase">
+                                <tr>
+                                    <th>Role & Company</th>
+                                    <th>Applied On</th>
+                                    <th>Status</th>
+                                    <th class="text-end">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for app in recent_applications %}
+                                    <tr>
+                                        <td>
+                                            <div class="fw-bold">{{ app.title }}</div>
+                                            <small class="text-muted">{{ app.company_name }} &bull; {{ app.location }}</small>
+                                        </td>
+                                        <td class="small text-muted">{{ app.applied_at[:10] }}</td>
+                                        <td>
+                                            {% if app.status == 'Pending' %}
+                                                <span class="badge-status badge-pending"><i class="bi bi-clock"></i> Pending</span>
+                                            {% elif app.status == 'Under Review' %}
+                                                <span class="badge-status badge-under-review"><i class="bi bi-search"></i> Under Review</span>
+                                            {% elif app.status == 'Shortlisted' %}
+                                                <span class="badge-status badge-shortlisted"><i class="bi bi-star-fill"></i> Shortlisted</span>
+                                            {% elif app.status == 'Selected' %}
+                                                <span class="badge-status badge-selected"><i class="bi bi-check-circle-fill"></i> Selected</span>
+                                            {% elif app.status == 'Rejected' %}
+                                                <span class="badge-status badge-rejected"><i class="bi bi-x-circle-fill"></i> Not Selected</span>
+                                            {% endif %}
+                                        </td>
+                                        <td class="text-end">
+                                            <a href="{{ url_for('job_details', job_id=app.job_id) }}" class="btn btn-sm btn-outline-secondary rounded-pill">
+                                                View Drive
+                                            </a>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="text-center py-5">
+                        <i class="bi bi-inbox fs-2 text-muted"></i>
+                        <p class="text-muted mt-2 mb-3">You haven't applied to any placement drives yet.</p>
+                        <a href="{{ url_for('job_listings') }}" class="btn btn-primary-custom btn-sm">Explore Openings</a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Recommended Jobs Column -->
+        <div class="col-lg-4">
+            <div class="card card-custom p-4 h-100">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="fw-bold mb-0">Recommended for You</h5>
+                    <a href="{{ url_for('job_listings') }}" class="small text-primary fw-semibold text-decoration-none">More</a>
+                </div>
+
+                {% if recommended_jobs %}
+                    <div class="d-flex flex-column gap-3">
+                        {% for job in recommended_jobs %}
+                            <div class="p-3 rounded-3 bg-light border">
+                                <div class="d-flex justify-content-between align-items-start mb-1">
+                                    <h6 class="fw-bold mb-0">
+                                        <a href="{{ url_for('job_details', job_id=job.id) }}" class="text-dark text-decoration-none">
+                                            {{ job.title }}
+                                        </a>
+                                    </h6>
+                                    <span class="badge bg-secondary-subtle text-secondary small">{{ job.job_type }}</span>
+                                </div>
+                                <div class="text-muted small mb-2">{{ job.company_name }} &bull; {{ job.location }}</div>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span class="small fw-semibold text-success">{{ job.salary_range or 'Competitive' }}</span>
+                                    <a href="{{ url_for('job_details', job_id=job.id) }}" class="btn btn-sm btn-primary-custom py-1 px-3">
+                                        Apply
+                                    </a>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <p class="text-muted small mb-0">You have reviewed all available openings! Check back soon for new drives.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

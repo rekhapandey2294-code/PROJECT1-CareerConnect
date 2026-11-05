@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+
+{% block title %}Registered Students - CareerConnect Admin{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4">
+        <div>
+            <h2 class="fw-bold mb-1">Registered Students Directory</h2>
+            <p class="text-muted small mb-0">Browse candidate profiles, verify academic credentials, and view uploaded resumes.</p>
+        </div>
+        <a href="{{ url_for('admin_dashboard') }}" class="btn btn-outline-secondary btn-sm mt-3 mt-md-0">
+            <i class="bi bi-arrow-left me-1"></i> Admin Dashboard
+        </a>
+    </div>
+
+    <!-- Filter Bar -->
+    <div class="card card-custom p-4 mb-4 shadow-sm">
+        <form method="GET" action="{{ url_for('manage_students') }}">
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label class="form-label small">Search Student</label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-light text-muted"><i class="bi bi-search"></i></span>
+                        <input type="text" name="keyword" class="form-control" placeholder="Search by name, email, or roll number..." value="{{ keyword }}">
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label small">Department</label>
+                    <select name="department" class="form-select">
+                        <option value="">All Departments</option>
+                        {% for dept in departments %}
+                            <option value="{{ dept }}" {% if department == dept %}selected{% endif %}>{{ dept }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-2 d-flex align-items-end gap-2">
+                    <button type="submit" class="btn btn-primary-custom w-100">Filter</button>
+                    {% if keyword or department %}
+                        <a href="{{ url_for('manage_students') }}" class="btn btn-outline-secondary" title="Clear Filters">
+                            <i class="bi bi-x-lg"></i>
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <!-- Students Table -->
+    <div class="card card-custom shadow-sm overflow-hidden">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th class="ps-4">Student Name & Email</th>
+                        <th>Roll Number</th>
+                        <th>Department</th>
+                        <th>Batch</th>
+                        <th>Skills</th>
+                        <th>Applications</th>
+                        <th>Resume</th>
+                        <th class="text-end pe-4">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for student in students %}
+                        <tr>
+                            <td class="ps-4">
+                                <div class="fw-bold">{{ student.name }}</div>
+                                <small class="text-muted">{{ student.email }}</small>
+                            </td>
+                            <td><span class="badge bg-light text-dark border">{{ student.roll_number or 'N/A' }}</span></td>
+                            <td class="small">{{ student.department or 'Unassigned' }}</td>
+                            <td class="small text-muted">{{ student.batch_year or '-' }}</td>
+                            <td>
+                                <span class="badge bg-secondary-subtle text-secondary">{{ student.skills_count }} skills</span>
+                            </td>
+                            <td>
+                                <span class="badge bg-primary-subtle text-primary">{{ student.applications_count }} applied</span>
+                            </td>
+                            <td>
+                                {% if student.resume_filename %}
+                                    <a href="{{ url_for('view_resume', filename=student.resume_filename) }}" target="_blank" class="badge bg-success-subtle text-success border border-success-subtle text-decoration-none" title="Download Resume">
+                                        <i class="bi bi-file-earmark-pdf-fill me-1"></i> Available
+                                    </a>
+                                {% else %}
+                                    <span class="badge bg-danger-subtle text-danger">Missing</span>
+                                {% endif %}
+                            </td>
+                            <td class="text-end pe-4">
+                                <a href="{{ url_for('view_student_detail', student_id=student.id) }}" class="btn btn-sm btn-outline-primary">
+                                    <i class="bi bi-person-lines-fill me-1"></i> View Record
+                                </a>
+                            </td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td colspan="8" class="text-center py-5 text-muted">
+                                <i class="bi bi-people fs-2 d-block mb-2"></i>
+                                No student records found.
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

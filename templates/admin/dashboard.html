@@ -1,0 +1,217 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Console - CareerConnect{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Admin Header -->
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center bg-white p-4 rounded-4 shadow-sm border mb-4">
+        <div>
+            <span class="badge bg-dark text-white fw-semibold mb-1">
+                <i class="bi bi-shield-lock-fill text-warning me-1"></i> Admin Console
+            </span>
+            <h2 class="fw-bold mb-1">Campus Placement Operations Hub</h2>
+            <p class="text-muted small mb-0">Overview of placement drives, candidate evaluations, and recruitment statistics.</p>
+        </div>
+        <div class="mt-3 mt-md-0 d-flex gap-2">
+            <a href="{{ url_for('create_job') }}" class="btn btn-primary-custom btn-sm">
+                <i class="bi bi-plus-circle me-1"></i> Post New Job
+            </a>
+            <a href="{{ url_for('manage_applications') }}" class="btn btn-outline-custom btn-sm">
+                <i class="bi bi-check2-square me-1"></i> Review Applications
+            </a>
+        </div>
+    </div>
+
+    <!-- Admin Metric Counters -->
+    <div class="row g-3 mb-4">
+        <div class="col-xl-3 col-md-6 col-6">
+            <div class="stat-card">
+                <div class="stat-icon-wrapper bg-primary-subtle text-primary">
+                    <i class="bi bi-briefcase-fill"></i>
+                </div>
+                <div>
+                    <div class="stat-val">{{ stats.active_jobs }} <small class="text-muted fs-6">/ {{ stats.total_jobs }}</small></div>
+                    <div class="stat-label">Active / Total Jobs</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6 col-6">
+            <div class="stat-card">
+                <div class="stat-icon-wrapper bg-info-subtle text-info">
+                    <i class="bi bi-people-fill"></i>
+                </div>
+                <div>
+                    <div class="stat-val">{{ stats.total_students }}</div>
+                    <div class="stat-label">Registered Students</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6 col-6">
+            <div class="stat-card">
+                <div class="stat-icon-wrapper bg-warning-subtle text-warning">
+                    <i class="bi bi-clock-history"></i>
+                </div>
+                <div>
+                    <div class="stat-val">{{ stats.pending }}</div>
+                    <div class="stat-label">Pending Review</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6 col-6">
+            <div class="stat-card">
+                <div class="stat-icon-wrapper bg-success-subtle text-success">
+                    <i class="bi bi-award-fill"></i>
+                </div>
+                <div>
+                    <div class="stat-val">{{ stats.selected }}</div>
+                    <div class="stat-label">Offers Accepted</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Submissions and Analytics -->
+    <div class="row g-4">
+        <!-- Recent Applications Table -->
+        <div class="col-lg-8">
+            <div class="card card-custom p-4 h-100">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="fw-bold mb-0">Recent Candidate Applications</h5>
+                    <a href="{{ url_for('manage_applications') }}" class="small text-primary fw-semibold text-decoration-none">
+                        View All ({{ stats.total_applications }}) &rarr;
+                    </a>
+                </div>
+
+                {% if recent_applications %}
+                    <div class="table-responsive">
+                        <table class="table align-middle">
+                            <thead class="table-light small text-uppercase">
+                                <tr>
+                                    <th>Candidate</th>
+                                    <th>Applied Drive</th>
+                                    <th>Status</th>
+                                    <th class="text-end">Manage</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for app in recent_applications %}
+                                    <tr>
+                                        <td>
+                                            <div class="fw-bold">
+                                                <a href="{{ url_for('view_student_detail', student_id=app.user_id) }}" class="text-dark text-decoration-none hover-primary">
+                                                    {{ app.student_name }}
+                                                </a>
+                                            </div>
+                                            <small class="text-muted">{{ app.roll_number or app.student_email }}</small>
+                                        </td>
+                                        <td>
+                                            <div class="fw-semibold small">{{ app.job_title }}</div>
+                                            <small class="text-muted">{{ app.company_name }}</small>
+                                        </td>
+                                        <td>
+                                            {% if app.status == 'Pending' %}
+                                                <span class="badge-status badge-pending">Pending</span>
+                                            {% elif app.status == 'Under Review' %}
+                                                <span class="badge-status badge-under-review">Under Review</span>
+                                            {% elif app.status == 'Shortlisted' %}
+                                                <span class="badge-status badge-shortlisted">Shortlisted</span>
+                                            {% elif app.status == 'Selected' %}
+                                                <span class="badge-status badge-selected">Selected</span>
+                                            {% elif app.status == 'Rejected' %}
+                                                <span class="badge-status badge-rejected">Rejected</span>
+                                            {% endif %}
+                                        </td>
+                                        <td class="text-end">
+                                            <div class="dropdown">
+                                                <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                                    Status
+                                                </button>
+                                                <ul class="dropdown-menu dropdown-menu-end shadow-sm small">
+                                                    <li>
+                                                        <form method="POST" action="{{ url_for('update_application_status', app_id=app.id) }}">
+                                                            <input type="hidden" name="status" value="Under Review">
+                                                            <button type="submit" class="dropdown-item">Mark Under Review</button>
+                                                        </form>
+                                                    </li>
+                                                    <li>
+                                                        <form method="POST" action="{{ url_for('update_application_status', app_id=app.id) }}">
+                                                            <input type="hidden" name="status" value="Shortlisted">
+                                                            <button type="submit" class="dropdown-item text-primary fw-semibold">Shortlist Candidate</button>
+                                                        </form>
+                                                    </li>
+                                                    <li>
+                                                        <form method="POST" action="{{ url_for('update_application_status', app_id=app.id) }}">
+                                                            <input type="hidden" name="status" value="Selected">
+                                                            <button type="submit" class="dropdown-item text-success fw-semibold">Accept / Select</button>
+                                                        </form>
+                                                    </li>
+                                                    <li>
+                                                        <form method="POST" action="{{ url_for('update_application_status', app_id=app.id) }}">
+                                                            <input type="hidden" name="status" value="Rejected">
+                                                            <button type="submit" class="dropdown-item text-danger">Reject Application</button>
+                                                        </form>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <p class="text-muted text-center py-4 mb-0">No applications received yet.</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Sidebar: Active Partner Companies -->
+        <div class="col-lg-4">
+            <div class="card card-custom p-4 mb-4">
+                <h5 class="fw-bold mb-3">Partner Recruiters</h5>
+                {% if company_stats %}
+                    <div class="d-flex flex-column gap-3">
+                        {% for comp in company_stats %}
+                            <div class="d-flex justify-content-between align-items-center p-2 rounded-2 bg-light border">
+                                <div class="d-flex align-items-center gap-2">
+                                    <div class="bg-white p-2 rounded border text-primary">
+                                        <i class="bi bi-building"></i>
+                                    </div>
+                                    <span class="fw-semibold small">{{ comp.company_name }}</span>
+                                </div>
+                                <span class="badge bg-primary-subtle text-primary">{{ comp.opening_count }} drive{{ 's' if comp.opening_count > 1 else '' }}</span>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <p class="text-muted small mb-0">No companies registered yet.</p>
+                {% endif %}
+            </div>
+
+            <!-- Quick Navigation Shortcuts -->
+            <div class="card card-custom p-4">
+                <h5 class="fw-bold mb-3">Placement Cell Shortcuts</h5>
+                <div class="d-flex flex-column gap-2">
+                    <a href="{{ url_for('create_job') }}" class="btn btn-outline-primary text-start d-flex align-items-center justify-content-between">
+                        <span><i class="bi bi-plus-circle me-2"></i> Post Placement Drive</span>
+                        <i class="bi bi-chevron-right small"></i>
+                    </a>
+                    <a href="{{ url_for('manage_jobs') }}" class="btn btn-outline-secondary text-start d-flex align-items-center justify-content-between">
+                        <span><i class="bi bi-briefcase me-2"></i> Manage Job Postings</span>
+                        <i class="bi bi-chevron-right small"></i>
+                    </a>
+                    <a href="{{ url_for('manage_students') }}" class="btn btn-outline-secondary text-start d-flex align-items-center justify-content-between">
+                        <span><i class="bi bi-mortarboard me-2"></i> Registered Students Directory</span>
+                        <i class="bi bi-chevron-right small"></i>
+                    </a>
+                    <a href="{{ url_for('manage_applications') }}" class="btn btn-outline-secondary text-start d-flex align-items-center justify-content-between">
+                        <span><i class="bi bi-filter-circle me-2"></i> Screen Applications</span>
+                        <i class="bi bi-chevron-right small"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,25 @@
+# Python cache & bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+*.env
+.venv/
+venv/
+ENV/
+env/
+
+# Flask & SQLite instance
+instance/
+*.sqlite3
+*.db
+*.db-journal
+
+# Uploaded candidate files in production (keep directory structure)
+static/uploads/resumes/*
+!static/uploads/resumes/.gitkeep
+
+# IDE and OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
